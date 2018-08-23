@@ -102,3 +102,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+datasets/여운동_201808.tsv
+datasets/keyword.npy
+datasets/label.npy
+datasets/scopus_ai_keywords.npy
+datasets/scopus_ai_test.csv
+datasets/scopus_ai_train.csv
+datasets/text.npy
