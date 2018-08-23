@@ -32,18 +32,19 @@ def split_train_test(text, label, keywords, test_size, seed):
 
     return X_train, X_test, y_train, y_test, keywords
 
-
+# text = X_test
+# label = y_test
+# keywords
 def make_torchcsv_form(text, label, keywords, csvpath):
     with io.open(csvpath, 'w', encoding='utf8', newline='') as f:
         writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
-
         keywords = keywords.astype('str').tolist()
         writer.writerow(['TEXT'] + keywords)
 
         for n, (t, l) in enumerate(zip(text, label)):
             t = [' '.join(x) for x in t]
             t = '. '.join(t) + '.'
-            l = l.astype('str').tolist()
+            l = l.tolist()
             line = [t] + l
             writer.writerow(line)
 
@@ -61,7 +62,7 @@ def tokenizer(comment):
     return [x.text for x in nlp.tokenizer(comment) if x.text != " "]
 
 
-def get_dataset(keywords, fix_length=500, lower=False, vectors=None):
+def get_dataset(keywords, file_train, file_test, fix_length=500, lower=False, vectors=None):
     comment = data.Field(
         sequential=True,
         fix_length=fix_length,
@@ -73,15 +74,17 @@ def get_dataset(keywords, fix_length=500, lower=False, vectors=None):
 
     fields_csv = []
     fields_csv.append(('TEXT', comment))
-    for l in keywords:
+    for l in keywords:        
         label_field = (l, data.Field(use_vocab=False,
                                      sequential=False,
-                                     tensor_type=torch.cuda.ByteTensor))
+                                     tensor_type=torch.cuda.FloatTensor))
+        # torch.cuda.ByteTensor
+
         fields_csv.append(label_field)
 
     train, test = data.TabularDataset.splits(
         path='datasets/', format='csv', skip_header=True,
-        train='scopus_ai_train.csv', validation='scopus_ai_test.csv',
+        train=file_train, validation=file_test,
         fields=fields_csv)
 
     comment.build_vocab(

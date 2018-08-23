@@ -10,7 +10,11 @@ from model_config import model_argument
 if __name__ == '__main__':
     keywords = np.load('datasets/scopus_ai_keywords.npy')
     nlabels = len(keywords)
-    train, test, comment = get_dataset(keywords, fix_length=500)
+    model_argument['nlabels'] = nlabels
+
+    file_train = 'scopus_ai_test.csv'
+    file_test = 'scopus_ai_test.csv'
+    train, test, comment = get_dataset(keywords, file_train, file_test, fix_length=500)
 
     train_iter = get_iterator(train, batch_size=32, train=True, shuffle=True, repeat=False)
     test_iter = get_iterator(test, batch_size=32, train=True, shuffle=False, repeat=False)
@@ -48,7 +52,7 @@ if __name__ == '__main__':
 
         for epoch in range(1, model_argument['epochs'] + 1):
             learn(model, train_iter, optimizer, criterion)
-            loss = evaluate(model, test_iter, optimizer, criterion)
+            loss = evaluate(model, test_iter, criterion)
 
             if not best_valid_loss or loss < best_valid_loss:
                 best_valid_loss = loss

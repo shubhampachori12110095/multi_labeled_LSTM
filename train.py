@@ -9,16 +9,20 @@ def learn(model, data, optimizer, criterion):
     total_loss = 0
 
     for batch_num, batch in enumerate(data):
-        '''
-        if batch_num > 0:
-            break
-        '''
         model.zero_grad()
-        x, lens = batch.text
-        y = batch.label
+
+        y = []
+        for k in batch.fields:
+            if k == 'TEXT':
+                x = batch.__dict__.get(k)
+            else:
+                y.append(batch.__dict__.get(k))
+
+        y = torch.stack(y, dim=1)
 
         logits, _ = model(x)
-        loss = criterion(logits.view(-1, model_argument['nlabels']), y)
+        logits = logits.view(-1, model_argument['nlabels'])
+        loss = criterion(logits, y)
         total_loss += float(loss)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), model_argument['clipgrad'])
@@ -27,16 +31,30 @@ def learn(model, data, optimizer, criterion):
     return total_loss / len(data)
 
 
-def evaluate(model, data, criterion, args, type='Valid'):
+def evaluate(model, data, criterion, type='Valid'):
     model.eval()
     total_loss = 0
+
+    Y = []
+    P = []
     with torch.no_grad():
         for batch_num, batch in enumerate(data):
-            x, lens = batch.text
-            y = batch.label
+            y = []
+            for k in batch.fields:
+                if k == 'TEXT':
+                    x = batch.__dict__.get(k)
+                else:
+                    y.append(batch.__dict__.get(k))
+
+            y = torch.stack(y, dim=1)
 
             logits, _ = model(x)
-            total_loss += float(criterion(logits.view(-1, args.nlabels), y))
+            logits = logits.view(-1, model_argument['nlabels'])
+            loss = criterion(logits, y)
+            total_loss += float(loss)
+
+            # TODO: recall / precision 
+            prob = torch.nn.functional.sigmoid(logits)
 
     print()
     print("[{} loss]: {:.5f}".format(type, total_loss / len(data)))
