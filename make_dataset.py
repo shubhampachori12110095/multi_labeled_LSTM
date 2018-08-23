@@ -17,7 +17,7 @@ import torch
 
 def split_train_test(text, label, keywords, test_size, seed):
     X_train, X_test, y_train, y_test = train_test_split(
-            text, label, test_size=1000, random_state=seed)
+            text, label, test_size=test_size, random_state=seed)
 
     # is exist keyword
     lbl_tr = np.sum(y_train, axis=0) > 0
@@ -72,7 +72,7 @@ def get_dataset(keywords, fix_length=500, lower=False, vectors=None):
     )
 
     fields_csv = []
-    fields_csv.append(('abstract', comment))
+    fields_csv.append(('TEXT', comment))
     for l in keywords:
         label_field = (l, data.Field(use_vocab=False,
                                      sequential=False,
@@ -85,12 +85,12 @@ def get_dataset(keywords, fix_length=500, lower=False, vectors=None):
         fields=fields_csv)
 
     comment.build_vocab(
-        train, test,
+        train,
         max_size=50000,
         min_freq=20,
         vectors=vectors)
 
-    return train, test
+    return train, test, comment
 
 
 def get_iterator(dataset, batch_size, train=True, shuffle=True, repeat=False):

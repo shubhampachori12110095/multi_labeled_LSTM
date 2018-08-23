@@ -109,3 +109,5 @@ datasets/scopus_ai_keywords.npy
 datasets/scopus_ai_test.csv
 datasets/scopus_ai_train.csv
 datasets/text.npy
+*.iml
+*.xml

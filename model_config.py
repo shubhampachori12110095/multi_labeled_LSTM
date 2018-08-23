@@ -1,0 +1,15 @@
+model_argument = {
+    'emsize': 50,
+    'hidden': 100,
+    'nlayers': 1,
+    'drop': 0,
+    'bi': False,
+    'model': 'GRU',
+    'lr': 1e-3,
+    'clipgrad': 10,
+    'nlabels': 0,
+    'epochs': 10,
+    'batch_size': 32,
+    'vectors': False,
+    'cuda': True,
+}
