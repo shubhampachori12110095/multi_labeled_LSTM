@@ -12,7 +12,7 @@ if __name__ == '__main__':
     nlabels = len(keywords)
     model_argument['nlabels'] = nlabels
 
-    file_train = 'scopus_ai_test.csv'
+    file_train = 'scopus_ai_train.csv'
     file_test = 'scopus_ai_test.csv'
     train, test, comment = get_dataset(keywords, file_train, file_test, fix_length=500)
 
@@ -47,15 +47,23 @@ if __name__ == '__main__':
     criterion = nn.MultiLabelSoftMarginLoss()
     optimizer = torch.optim.Adam(model.parameters(), model_argument['lr'], amsgrad=True)
 
+    R = []
+    P = []
     try:
         best_valid_loss = None
 
         for epoch in range(1, model_argument['epochs'] + 1):
-            learn(model, train_iter, optimizer, criterion)
-            loss = evaluate(model, test_iter, criterion)
+            loss_train = learn(model, train_iter, optimizer, criterion)
+            print("[{} loss]: {:.5f}".format('Train', loss_train))
+            loss, r, p = evaluate(model, test_iter, criterion)
+            R.append(r)
+            P.append(p)
 
             if not best_valid_loss or loss < best_valid_loss:
                 best_valid_loss = loss
+
+        np.save('recall.npy', R)
+        np.save('precison.npy', P)
 
     except KeyboardInterrupt:
         print("[Ctrl+C] Training stopped!")

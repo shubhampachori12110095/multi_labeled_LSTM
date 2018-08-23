@@ -2,7 +2,8 @@ import time
 import numpy as np
 import torch
 from model_config import model_argument
-
+from sklearn.metrics import recall_score
+from sklearn.metrics import precision_score
 
 def learn(model, data, optimizer, criterion):
     model.train()
@@ -53,13 +54,32 @@ def evaluate(model, data, criterion, type='Valid'):
             loss = criterion(logits, y)
             total_loss += float(loss)
 
-            # TODO: recall / precision 
+            # TODO: recall / precision
             prob = torch.nn.functional.sigmoid(logits)
+            P.append(prob.cpu().data.numpy())
+            Y.append(y.cpu().data.numpy())
+
+    P = np.concatenate(P, axis=0)
+    Y = np.concatenate(Y, axis=0)
+
+    recalls, precisions = [], []
+    for target, pred in zip(Y, P):
+        pred = pred > 0.5
+        pred = pred.astype(int)
+
+        recall = recall_score(target, pred)
+        precision = precision_score(target, pred)
+        recalls.append(recall)
+        precisions.append(precision)
+    av_recall = np.mean(recalls)
+    av_precision = np.mean(precisions)
 
     print()
     print("[{} loss]: {:.5f}".format(type, total_loss / len(data)))
+    print("[{} recall]: {:.5f}".format(type, av_recall))
+    print("[{} precision]: {:.5f}".format(type, av_precision))
 
-    return total_loss / len(data)
+    return total_loss / len(data), av_recall, av_precision
 
 
 def load_pretrained_vectors(dim):

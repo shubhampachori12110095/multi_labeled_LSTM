@@ -8,7 +8,7 @@ model_argument = {
     'lr': 1e-3,
     'clipgrad': 10,
     'nlabels': 0,
-    'epochs': 10,
+    'epochs': 200,
     'batch_size': 32,
     'vectors': False,
     'cuda': True,
