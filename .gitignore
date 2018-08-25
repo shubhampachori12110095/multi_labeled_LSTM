@@ -111,3 +111,5 @@ datasets/scopus_ai_train.csv
 datasets/text.npy
 *.iml
 *.xml
+*.csv
+*.xlsx
