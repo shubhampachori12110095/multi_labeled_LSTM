@@ -32,7 +32,7 @@ def learn(model, data, optimizer, criterion):
     return total_loss / len(data)
 
 
-def evaluate(model, data, criterion, type='Valid'):
+def evaluate(model, data, criterion, type='Valid', save=False):
     model.eval()
     total_loss = 0
 
@@ -78,6 +78,17 @@ def evaluate(model, data, criterion, type='Valid'):
     print("[{} loss]: {:.5f}".format(type, total_loss / len(data)))
     print("[{} recall]: {:.5f}".format(type, av_recall))
     print("[{} precision]: {:.5f}".format(type, av_precision))
+
+    if save:
+        np.save('training_history/mlc_20180903_test_target.npy', Y)
+        np.save('training_history/mlc_20180903_test_predict.npy', P)
+
+        k = []
+        for x in data.dataset.fields:
+            if x != 'TEXT':
+                k.append(x)
+
+        np.save('training_history/mlc_20180903_test_dict.npy', k)
 
     return total_loss / len(data), av_recall, av_precision
 

@@ -1,11 +1,14 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import os
 from make_dataset import get_dataset, get_iterator
 from model.rnn_atten_1 import Encoder, Attention, Classifier
 from train import learn, evaluate, load_pretrained_vectors
 
 from model_config import model_argument
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 if __name__ == '__main__':
     keywords = np.load('datasets/scopus_ai_keywords.npy')
@@ -67,3 +70,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print("[Ctrl+C] Training stopped!")
+
+    torch.save(model, 'training_history/mlc_20180903.pt')
+    # model = torch.load('training_history/mlc_20180903.pt')
+
