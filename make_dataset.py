@@ -4,6 +4,7 @@ import io
 import csv
 from sklearn.model_selection import train_test_split
 from torchtext import data
+import pickle
 import re
 import spacy
 import en_core_web_sm
@@ -92,6 +93,9 @@ def get_dataset(keywords, file_train, file_test, fix_length=500, lower=False, ve
         max_size=50000,
         min_freq=20,
         vectors=vectors)
+
+    with open('datasets/vocab.pickle', 'wb') as handle:
+        pickle.dump(comment, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     return train, test, comment
 

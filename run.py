@@ -20,7 +20,7 @@ if __name__ == '__main__':
     train, test, comment = get_dataset(keywords, file_train, file_test, fix_length=500)
 
     train_iter = get_iterator(train, batch_size=32, train=True, shuffle=True, repeat=False)
-    test_iter = get_iterator(test, batch_size=32, train=True, shuffle=False, repeat=False)
+    test_iter = get_iterator(test, batch_size=32, train=False, shuffle=False, repeat=False)
 
     cuda = torch.cuda.is_available() and model_argument['cuda']
     device = torch.device("cpu") if not cuda else torch.device("cuda:0")

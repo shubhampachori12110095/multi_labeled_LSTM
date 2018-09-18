@@ -1,0 +1,9 @@
+--- C:\Users\yj-wn\Anaconda3\lib\site-packages\torch\nn\modules\linear.py
++++ C:\Users\yj-wn\Anaconda3\lib\site-packages\torch\nn\modules\linear.py
+@@ -1,5 +1,5 @@
+ class Linear(Module):
+-    r"""Applies a linear transformation to the incoming data: :math:`y = xA^T + b`
++    r"""Applies a linear transformation to the incoming data: :math:`y = Ax + b`
+ 
+     Args:
+         in_features: size of each input sample
